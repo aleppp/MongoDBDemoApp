@@ -3,30 +3,38 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDBDemo;
 
-string connectionString = "MONGODB CONNECTION HERE";
-
-if(connectionString == null)
-{
-    Console.WriteLine("Connection Failed");
-    Environment.Exit(0);
-}
+string connectionString = "MONGODBURL HERE";
 
 string databaseName = "upmobilecosmos";
 string collectionName = "users";
 
 var client = new MongoClient(connectionString);
-var db = client.GetDatabase(databaseName);
-var collection = db.GetCollection<BsonDocument>("users");
+var database = client.GetDatabase(databaseName);
 
-var filter = Builders<BsonDocument>.Filter.Eq("enterprise_id", "mnazrulhisham.mohama");
+try
+{
+    var collectionNames = database.ListCollections().ToList();
+    Console.WriteLine("Connection to MongoDB is successful");
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Error: " + ex.Message);
+}
 
-var document = collection.Find(filter).First();
+var collection = database.GetCollection<BsonDocument>(collectionName);
 
-if(document == null)
+var filter = Builders<BsonDocument>.Filter.Empty;
+var filter2 = Builders<BsonDocument>.Filter.Eq("enterprise_id", "shaharuddin.hamid");
+
+var document = collection.Count(filter);
+var document2 = collection.Find(filter2).First();
+
+if (document2 == null)
 {
     Console.WriteLine("No records found.");
 }
 else
 {
-    Console.WriteLine(document.ToJson());
+    Console.WriteLine(document);
+    Console.WriteLine(document2);
 }
