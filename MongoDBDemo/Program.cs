@@ -1,9 +1,11 @@
 ﻿
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
+using System.IO;
 using MongoDBDemo;
 
-string connectionString = "MONGODBURL HERE";
+string connectionString = "MONGODBURL";
 
 string databaseName = "upmobilecosmos";
 string collectionName = "users";
@@ -11,9 +13,11 @@ string collectionName = "users";
 var client = new MongoClient(connectionString);
 var database = client.GetDatabase(databaseName);
 
+var collection = database.GetCollection<BsonDocument>(collectionName);
+
 try
 {
-    var collectionNames = database.ListCollections().ToList();
+    database.ListCollections().ToList();
     Console.WriteLine("Connection to MongoDB is successful");
 }
 catch (Exception ex)
@@ -21,20 +25,65 @@ catch (Exception ex)
     Console.WriteLine("Error: " + ex.Message);
 }
 
-var collection = database.GetCollection<BsonDocument>(collectionName);
-
-var filter = Builders<BsonDocument>.Filter.Empty;
-var filter2 = Builders<BsonDocument>.Filter.Eq("enterprise_id", "shaharuddin.hamid");
-
-var document = collection.Count(filter);
-var document2 = collection.Find(filter2).First();
-
-if (document2 == null)
+try
 {
-    Console.WriteLine("No records found.");
+
+    using (StreamReader sr = new StreamReader("D:\\PluralSight\\C#\\Getting Started\\MongoDBDemoApp\\MongoDBDemo\\UPusers-moduleURLs.txt"))
+    {
+        // Create a list to hold the file lines.
+        var fileLines = new System.Collections.Generic.List<string>();
+
+        // Read each line from the file and add it to the list.
+        string line;
+        while ((line = sr.ReadLine()) != null)
+        {
+            fileLines.Add(line);
+        }
+
+        // Convert the list to an array.
+        string[] txtArray = fileLines.ToArray();
+
+        //new list to hold the new output
+        var outputLines = new List<string>();
+
+        //access mongodb collection
+        var filter = Builders<BsonDocument>.Filter.Empty;
+        var documents = await collection.FindAsync(filter);
+
+        while (await documents.MoveNextAsync())
+        {
+            var batch = documents.Current;
+            foreach (var document in batch)
+            {
+                // Check if the enterprise_id field matches any value in txtArray.
+                string enterpriseId = document.GetValue("enterprise_id").AsString;
+
+                if (Array.Exists(txtArray, element => element == enterpriseId))
+                {
+                    // If a match is found, extract the department field value and write to output.
+                    string department = document.Contains("department") ? document.GetValue("department").AsString : null;
+                    outputLines.Add($"{enterpriseId},{department}");
+                }
+            }
+        }
+
+        // Write the output lines to a new text file.
+        using (StreamWriter sw = new StreamWriter("D:\\PluralSight\\C#\\Getting Started\\MongoDBDemoApp\\MongoDBDemo\\output.txt"))
+        {
+            foreach (string outputLine in outputLines)
+            {
+                sw.WriteLine(outputLine);
+            }
+        }
+    }
 }
-else
+catch (Exception e)
 {
-    Console.WriteLine(document);
-    Console.WriteLine(document2);
+    // If an error occurs, display it to the console.
+    Console.WriteLine("The file could not be read:");
+    Console.WriteLine(e.Message);
+}
+finally
+{
+    Console.WriteLine("Executing finally block.");
 }
