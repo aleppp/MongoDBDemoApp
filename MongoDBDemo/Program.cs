@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using MongoDBDemo;
 
-string connectionString = "MONGODBURL";
+string connectionString = "mongodb://pet-up-mobile-cosmos-prod:ZiV8UgLxMIYANAiAbQjvRAEadABH7ginkMnTqU5wzVcWUUO9QsfBRnieCMjGleYa5uR6K7eSUt0MVhYyRx8cEw==@pet-up-mobile-cosmos-prod.documents.azure.com:10255/?ssl=true&replicaSet=globaldb";
 
 string databaseName = "upmobilecosmos";
 string collectionName = "users";
@@ -34,7 +34,7 @@ try
         var fileLines = new System.Collections.Generic.List<string>();
 
         // Read each line from the file and add it to the list.
-        string line;
+        string? line;
         while ((line = sr.ReadLine()) != null)
         {
             fileLines.Add(line);
@@ -62,7 +62,7 @@ try
                 {
                     Console.WriteLine(enterpriseId);
                     // If a match is found, extract the department field value and write to output.
-                    string department = document.GetValue("department").IsBsonNull ? null : document.GetValue("department").AsString;
+                    string? department = document.GetValue("department").IsBsonNull ? null : document.GetValue("department").AsString;
                     outputLines.Add($"{enterpriseId},{department}");
                 }
             }
