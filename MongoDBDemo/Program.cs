@@ -58,17 +58,18 @@ try
                 // Check if the enterprise_id field matches any value in txtArray.
                 string enterpriseId = document.GetValue("enterprise_id").AsString;
 
-                if (Array.Exists(txtArray, element => element == enterpriseId))
+                if (Array.Exists(txtArray, element => element == enterpriseId) && document.Contains("department"))
                 {
+                    Console.WriteLine(enterpriseId);
                     // If a match is found, extract the department field value and write to output.
-                    string department = document.Contains("department") ? document.GetValue("department").AsString : null;
+                    string department = document.GetValue("department").IsBsonNull ? null : document.GetValue("department").AsString;
                     outputLines.Add($"{enterpriseId},{department}");
                 }
             }
         }
 
         // Write the output lines to a new text file.
-        using (StreamWriter sw = new StreamWriter("D:\\PluralSight\\C#\\Getting Started\\MongoDBDemoApp\\MongoDBDemo\\output.txt"))
+        using (StreamWriter sw = new StreamWriter("D:\\PluralSight\\C#\\Getting Started\\MongoDBDemoApp\\MongoDBDemo\\outputprod.txt"))
         {
             foreach (string outputLine in outputLines)
             {
