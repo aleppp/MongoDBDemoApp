@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using MongoDBDemo;
 
-string connectionString = "mongodb://pet-up-mobile-cosmos-prod:ZiV8UgLxMIYANAiAbQjvRAEadABH7ginkMnTqU5wzVcWUUO9QsfBRnieCMjGleYa5uR6K7eSUt0MVhYyRx8cEw==@pet-up-mobile-cosmos-prod.documents.azure.com:10255/?ssl=true&replicaSet=globaldb";
+string connectionString = "MONGODBURL";
 
 string databaseName = "upmobilecosmos";
 string collectionName = "users";
@@ -28,7 +28,7 @@ catch (Exception ex)
 try
 {
 
-    using (StreamReader sr = new StreamReader("D:\\PluralSight\\C#\\Getting Started\\MongoDBDemoApp\\MongoDBDemo\\UPusers-moduleURLs.txt"))
+    using (StreamReader sr = new StreamReader("TXTFILE PATH"))
     {
         // Create a list to hold the file lines.
         var fileLines = new System.Collections.Generic.List<string>();
@@ -69,7 +69,7 @@ try
         }
 
         // Write the output lines to a new text file.
-        using (StreamWriter sw = new StreamWriter("D:\\PluralSight\\C#\\Getting Started\\MongoDBDemoApp\\MongoDBDemo\\outputprod.txt"))
+        using (StreamWriter sw = new StreamWriter("TXTFILE PATH"))
         {
             foreach (string outputLine in outputLines)
             {
